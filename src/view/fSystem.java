@@ -5,6 +5,7 @@
  */
 package view;
 
+import javax.security.auth.callback.ConfirmationCallback;
 import javax.swing.JOptionPane;
 
 /**
@@ -302,7 +303,7 @@ public class fSystem extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNovoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEdit))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -345,20 +346,34 @@ public class fSystem extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public static String listaProdutos[] = new String[10];
-    static int i = 0;
+    static int i = 0, s = 0, f = 0, d = 0;
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
 
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void btSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalvarActionPerformed
-        listaProdutos[i] = txtNome.getText();
-        JOptionPane.showMessageDialog(null, txtNome.getText() + ", salvo com sucesso!");
-        txtNome.setText("");
-        i++;
-        if (i == listaProdutos.length) {
-            JOptionPane.showMessageDialog(null, "Fim da lista");
-            i = 0;
+        if (s==i && i != 0){
+            d = JOptionPane.showConfirmDialog(null, "Você irá reescrever toda a lista. Deseja fazer isto?", "ATENÇÃO!", JOptionPane.YES_NO_OPTION);
+            if (d == 0){
+                for (i=0; i<listaProdutos.length; i++){
+                    listaProdutos[i]=null;
+                }
+                i = 0;
+                f = 0;
+            } else {
+                f = 1;
+            }
+        }
+        if (f == 0){
+            listaProdutos[i] = txtNome.getText();
+            JOptionPane.showMessageDialog(null, txtNome.getText() + ", salvo com sucesso!");
+            txtNome.setText("");
+            i++;
+            if (i == listaProdutos.length) {
+                JOptionPane.showMessageDialog(null, "Fim da lista");
+                i = 0;
+            }
         }
     }//GEN-LAST:event_btSalvarActionPerformed
 
@@ -371,23 +386,26 @@ public class fSystem extends javax.swing.JFrame {
         codigo = Integer.parseInt(txtCodProd.getText());
         listaProdutos[(codigo - 1)] = null;
         txtCodProd.setText("");
-
+        JOptionPane.showMessageDialog(null,"Item, de código: " + String.valueOf(codigo) + ", excluído.");
+        s = i;
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         int codigo = -1;
-        String nome = null;
-        JOptionPane.showMessageDialog(null,txtCodProd.getText()+""+txtNome.getText());
+        String nome = null, antigo = null;
         
         if (!(txtCodProd.getText().equals("")) || !(txtNome.getText().equals(""))) {
             codigo = Integer.parseInt(txtCodProd.getText());
             nome = txtNovoNome.getText();
+            antigo = listaProdutos[(codigo - 1)];
             listaProdutos[(codigo - 1)] = nome;
+            JOptionPane.showMessageDialog(null, "O item de cógigo " + codigo + ", foi renomeado de: '" + antigo + "' para: '" + nome + "'.");
         } else {
-
             JOptionPane.showMessageDialog(null, "Digite o código do produto e o nome do novo produo.");
         }
-
+        txtCodProd.setText("");
+        txtNovoNome.setText("");
+        s = i;
 
     }//GEN-LAST:event_btnEditActionPerformed
 
@@ -406,6 +424,11 @@ public class fSystem extends javax.swing.JFrame {
 
     private void btLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLimparActionPerformed
         txtArea.setText("");
+        
+        for (i=0; i<listaProdutos.length; i++){
+            listaProdutos[i]=null;
+        }
+        s = i;
 
     }//GEN-LAST:event_btLimparActionPerformed
 
@@ -415,7 +438,7 @@ public class fSystem extends javax.swing.JFrame {
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         String nome;
-        int v, verd = 0, local = 0;
+        int verd = 0, local = 0;
         nome = jTextField2.getText();
         for (i = 0; i < listaProdutos.length; i++) {
             if (listaProdutos[i].equals(nome)) {
@@ -430,6 +453,10 @@ public class fSystem extends javax.swing.JFrame {
         } else {
             lbResult.setText("Item: " + nome + ", não encontrado na lista.");
         }
+        
+        jTextField2.setText("");
+        
+        s = i;
     }//GEN-LAST:event_btnSearchActionPerformed
 
     /**
